@@ -1,0 +1,2668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+    Developed by: Igor Kalen
+    Contact: igor.kalen@laiusgroup.com
+    Date: June 2, 2025
+
+    ---
+    Copyright (c) 2025 Laius Group. All rights reserved.
+
+    This code and its contents are proprietary to Laius Group. Unauthorized use,
+    reproduction, distribution, or modification of any part of this code is strictly
+    prohibited without explicit written permission from Laius Group.
+
+    This code is intended solely for internal use by official Laius Group operations
+    and deployment on verified domains and subdomains controlled by Laius Group.
+    This restriction does not apply to domains or subdomains where customers have
+    access to user-generated content, which may utilize parts of this code under
+    specific agreements. 
+ -->
+
+<head>
+<link rel="icon" href="/laiuslogo.png" type="image/png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            cursor: none;
+        }
+        
+        body {
+            background-color: #0f0f0f;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+        
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .cursor-circle {
+            width: 24px;
+            height: 24px;
+            border: 3px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.08s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        
+        /* Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 8%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 8%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: transform 0.3s;
+            z-index: 101;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            bottom: 5px;
+            right: -8px;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav li a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s;
+        }
+        
+        nav li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFD700;
+            transition: width 0.3s ease;
+        }
+        
+        nav li a:hover {
+            color: white;
+        }
+        
+        nav li a:hover::after {
+            width: 100%;
+        }
+        
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 20px;
+            width: 30px;
+            cursor: pointer;
+            z-index: 101;
+        }
+        
+        .menu-toggle span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 8% 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-subtitle {
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.2s;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.4s;
+        }
+        
+        .hero-desc {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            color: #aaa;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.6s;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+        }
+        
+        .circle-1 {
+            top: -200px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #FFD700, #FFCC00);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .circle-2 {
+            bottom: -300px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            animation: float 20s ease-in-out 2s infinite reverse;
+        }
+        
+        /* Careers Section */
+        .careers-section {
+            padding: 2rem 8% 8rem;
+        }
+        
+        .careers-intro {
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+        
+        .careers-intro p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        /* Department Filters */
+        .department-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .department-filter {
+            padding: 0.8rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 30px;
+            color: #f0f0f0;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .department-filter:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+        }
+        
+        .department-filter.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #0f0f0f;
+        }
+        
+        /* Jobs Container */
+        .jobs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .department-jobs {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .department-jobs.active {
+            display: block;
+        }
+        
+        /* Job Card */
+        .job-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Job Header (the clickable part) */
+        .job-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .job-header:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        
+        .job-title-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .job-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .job-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #0f0f0f;
+        }
+        
+        .job-title-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .job-meta svg {
+            width: 15px;
+            height: 15px;
+            fill: #aaa;
+        }
+        
+        .job-toggle-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .job-toggle-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #aaa;
+            transition: transform 0.3s ease;
+        }
+        
+        .job-toggle-btn.active svg {
+            transform: rotate(180deg);
+        }
+        
+        /* Job Details (the expandable part) */
+        .job-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            border-top: 1px solid transparent;
+        }
+        
+        .job-details.active {
+            max-height: 2000px; /* Large enough to show all content */
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .job-details-content {
+            padding: 1.5rem;
+        }
+        
+        .job-section {
+            margin-bottom: 2rem;
+        }
+        
+        .job-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .job-section-title {
+            font-size: 1.2rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .job-section-title svg {
+            width: 18px;
+            height: 18px;
+            fill: #FFD700;
+        }
+        
+        .job-description {
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .job-list {
+            list-style: none;
+            margin-left: 0.5rem;
+        }
+        
+        .job-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #ddd;
+            line-height: 1.5;
+        }
+        
+        .job-list li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+        }
+        
+        .apply-container {
+            margin-top: 2rem;
+            background-color: rgba(255, 215, 0, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 3px solid #FFD700;
+        }
+        
+        .apply-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+        
+        .apply-instructions {
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .email-format {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .format-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .format-field {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            margin-bottom: 0.8rem;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .format-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .format-value {
+            color: #ddd;
+            font-family: monospace;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        
+        .apply-email {
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            opacity: 0.2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .empty-state-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+        
+        .empty-state-text {
+            color: #aaa;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 3rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #aaa;
+        }
+        
+        /* Benefits Section */
+        .benefits-section {
+            padding: 5rem 8%;
+            background-color: rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 4rem;
+        }
+        
+        .benefits-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .benefits-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.2;
+        }
+        
+        .benefits-circle-1 {
+            top: -100px;
+            right: -50px;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, #FFD700, #FFCC00);
+        }
+        
+        .benefits-circle-2 {
+            bottom: -200px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+        }
+        
+        .benefits-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .benefits-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .benefits-subtitle {
+            text-align: center;
+            color: #aaa;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            line-height: 1.6;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .benefit-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .benefit-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: #0f0f0f;
+        }
+        
+        .benefit-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-desc {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 8%;
+            background-color: #070707;
+            position: relative;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+        
+        .footer-col h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .footer-links li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links li a:hover {
+            color: #FFD700;
+            padding-left: 5px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .copyright {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            header {
+                padding: 1.5rem 6%;
+            }
+            
+            header.scrolled {
+                padding: 1rem 6%;
+            }
+            
+            .hero {
+                padding: 8rem 6% 4rem;
+            }
+            
+            .careers-section,
+            .benefits-section {
+                padding-left: 6%;
+                padding-right: 6%;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .benefits-title {
+                font-size: 2rem;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 4%;
+            }
+            
+            header.scrolled {
+                padding: 1rem 4%;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            nav ul {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 75%;
+                height: 100vh;
+                background-color: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.5s ease;
+                z-index: 99;
+                gap: 2rem;
+                padding: 2rem;
+            }
+            
+            nav ul.active {
+                right: 0;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+            }
+            
+            nav li a {
+                font-size: 1.2rem;
+                width: 100%;
+                text-align: center;
+                display: block;
+            }
+            
+            .hero {
+                padding: 8rem 4% 4rem;
+            }
+            
+            .careers-section,
+            .benefits-section {
+                padding-left: 4%;
+                padding-right: 4%;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .department-filters {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 1rem;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* Hide scrollbar for Firefox */
+            }
+            
+            .department-filters::-webkit-scrollbar {
+                display: none; /* Hide scrollbar for Chrome/Safari */
+            }
+            
+            .department-filter {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+            
+            .job-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .format-field {
+                grid-template-columns: 1fr;
+            }
+            
+            .format-label {
+                margin-bottom: 0.3rem;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+                margin: 0 auto;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header {
+                padding: 1.2rem 4%;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .hero {
+                padding-top: 7rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-desc {
+                font-size: 1rem;
+            }
+            
+            .careers-intro p {
+                font-size: 0.95rem;
+            }
+            
+            .job-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                position: relative;
+                padding-right: 3rem;
+            }
+            
+            .job-toggle-btn {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .job-title-area {
+                width: 100%;
+            }
+            
+            .apply-container {
+                padding: 1.2rem;
+            }
+            
+            .email-format {
+                padding: 1.2rem;
+            }
+            
+            .benefits-title {
+                font-size: 1.8rem;
+            }
+            
+            .benefits-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .footer-col h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .search-container {
+                margin-bottom: 2rem;
+            }
+            
+            .search-input {
+                padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .search-icon {
+                width: 16px;
+                height: 16px;
+                left: 0.8rem;
+            }
+            
+            .job-title-info h3 {
+                font-size: 1.1rem;
+            }
+            
+            .job-meta {
+                font-size: 0.8rem;
+            }
+            
+            .job-section-title {
+                font-size: 1.1rem;
+            }
+            
+            .job-description,
+            .apply-instructions,
+            .job-list li {
+                font-size: 0.9rem;
+            }
+            
+            .apply-container,
+            .email-format {
+                padding: 1rem;
+            }
+            
+            .format-value {
+                font-size: 0.85rem;
+                padding: 0.4rem;
+            }
+        }
+        
+        @media (pointer: coarse) {
+            .cursor {
+                display: none;
+            }
+            
+            * {
+                cursor: auto !important;
+            }
+            
+            a, button, .menu-toggle, input, .job-header, .department-filter {
+                cursor: pointer !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-circle"></div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+    <a href="https://laiusgroup.com/">
+  <img src="laius-group.png" alt="Laius Group Logo" style="height: 60px;">
+</a>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/#services">Services</a></li>
+                <li><a href="/#contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/careers">Careers</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+        </div>
+        <div class="hero-content">
+            <p class="hero-subtitle">Join Our Team</p>
+            <h1 class="hero-title">Careers at Laius Group</h1>
+            <p class="hero-desc">Join our team of creative thinkers, innovative problem solvers, and digital experts to create exceptional experiences that transform businesses.</p>
+        </div>
+    </section>
+    
+    <!-- Main Careers Section -->
+    <section class="careers-section">
+        <div class="careers-intro">
+            <p>At Laius Group, we're building a team of passionate individuals who are excited about digital innovation and creating exceptional user experiences. We offer a collaborative environment where creativity thrives and professional growth is encouraged.</p>
+            <p>Explore our current openings below and find where your skills and passion align with our mission.</p>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="jobSearch" class="search-input" placeholder="Search for positions...">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </div>
+        
+        <!-- Department Filters -->
+        <div class="department-filters">
+            <button class="department-filter active" data-department="all">All Departments</button>
+            <button class="department-filter" data-department="design">Design</button>
+            <button class="department-filter" data-department="development">Development</button>
+            <button class="department-filter" data-department="marketing">Marketing</button>
+            <button class="department-filter" data-department="operations">Operations</button>
+        </div>
+        
+        <!-- Jobs Container -->
+        <div class="jobs-container">
+            <!-- All Jobs Section -->
+            <div class="department-jobs active" id="all-jobs">
+                <!-- Graphic Designer Job Card -->
+                <div class="job-card" data-job-id="ui-ux-designer" data-department="design">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Graphic Designer</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                    We’re looking for a talented Graphic Designer to create stunning visuals that bring our clients’ ideas to life. In this freelance role, you’ll design logos, marketing materials, social media graphics, and other creative assets. You’ll work remotely with flexible hours, so you can work from anywhere in the world.
+
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Create logos, banners, social media posts, and print materials</li>
+                                    <li>Ensure all designs align with client branding and project goals</li>
+                                    <li>Collaborate remotely with our team for feedback and revisions</li>
+                                    <li>Deliver high-quality assets on time</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Strong portfolio showcasing graphic design skills and creativity</li>
+                                    <li>Proficiency with Adobe Photoshop, Illustrator, or similar tools</li>
+                                    <li>Ability to work independently and meet deadlines</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Experience with animation or motion graphics</li>
+                                    <li>Understanding of print production and digital formats</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">Graphic Designer Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                  <!-- Frontend Web Developer Job Card -->
+                <div class="job-card" data-job-id="frontend-web-developer" data-department="development">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Frontend Web Developer</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re hiring a Frontend Web Developer skilled in HTML and CSS to build and maintain web projects. You’ll work closely with designers and other team members remotely with flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Develop responsive, user-friendly websites</li>
+                                    <li>Troubleshoot and fix bugs</li>
+                                    <li>Collaborate with design and project teams</li>
+                                    <li>Write clean, maintainable code</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio demonstrating web development with HTML and CSS</li>
+                                    <li>Ability to work independently</li>
+                                    <li>Strong communication</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Backend knowledge (JavaScript or other)</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">Frontend Web Developer Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                   <!-- IT Support Specialist Job Card -->
+                <div class="job-card" data-job-id="it-support-specialist" data-department="operations">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M16.48,10.41c-0.39,0.39-1.04,0.39-1.43,0l-4.47-4.46l-7.05,7.04l-0.66-0.63c-1.17-1.17-1.17-3.07,0-4.24l4.24-4.24 c1.17-1.17,3.07-1.17,4.24,0L16.48,9C16.87,9.39,16.87,10.02,16.48,10.41z M17.18,8.29c0.78,0.78,0.78,2.05,0,2.83 c-1.27,1.27-2.61,0.22-2.83,0l-3.76-3.76l-5.57,5.57c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.42,0l4.62-4.62l0.71,0.71 l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.42,0l4.62-4.62l0.71,0.71l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41 c0.39,0.39,1.02,0.39,1.41,0l4.62-4.62l0.71,0.71l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.41,0l8.32-8.34 c1.17-1.17,1.17-3.07,0-4.24l-4.24-4.24c-1.15-1.15-3.01-1.17-4.18-0.06L17.18,8.29z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>IT Support Specialist</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re looking for an IT Support Specialist to provide remote technical assistance and troubleshoot hardware and software issues. This freelance role offers flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Diagnose and resolve technical problems remotely</li>
+                                    <li>Guide users clearly and patiently</li>
+                                    <li>Maintain basic IT infrastructure and security</li>
+                                    <li>Collaborate with the team</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio or proof of IT support experience</li>
+                                    <li>Knowledge of common troubleshooting (VPS, DNS etc)</li>
+                                    <li>Strong communication</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Network admin familiarity</li>
+                                    <li>SSH & Linux Terminal Knowledge</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">IT Support Specialist Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        <!-- Talent & Partnership Scout -->
+                <div class="job-card" data-job-id="talent-and-partnership-scout" data-department="marketing">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Talent & Partnership Scout</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re searching for a Talent & Partnership Scout to find and engage small agencies, developers, and creatives interested in partnering with Laius Group. This freelance role is remote, with flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Identify and reach out to potential partners</li>
+                                    <li>Build and maintain professional relationships</li>
+                                    <li>Present partnership opportunities</li>
+                                    <li>Help grow Laius Group’s freelance network</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio or evidence of relevant outreach or sales experience</li>
+                                    <li>Excellent communication and networking skills</li>
+                                    <li>Self-motivated and organized</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Familiarity with creative/digital agencies</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">IT Support Specialist Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Design Jobs Section -->
+            <div class="department-jobs" id="design-jobs">
+                <!-- Graphic Designer Job Card -->
+                <div class="job-card" data-job-id="ui-ux-designer" data-department="design">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Graphic Designer</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                    We’re looking for a talented Graphic Designer to create stunning visuals that bring our clients’ ideas to life. In this freelance role, you’ll design logos, marketing materials, social media graphics, and other creative assets. You’ll work remotely with flexible hours, so you can work from anywhere in the world.
+
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Create logos, banners, social media posts, and print materials</li>
+                                    <li>Ensure all designs align with client branding and project goals</li>
+                                    <li>Collaborate remotely with our team for feedback and revisions</li>
+                                    <li>Deliver high-quality assets on time</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Strong portfolio showcasing graphic design skills and creativity</li>
+                                    <li>Proficiency with Adobe Photoshop, Illustrator, or similar tools</li>
+                                    <li>Ability to work independently and meet deadlines</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Experience with animation or motion graphics</li>
+                                    <li>Understanding of print production and digital formats</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">Graphic Designer Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No other design jobs currently -->
+                <div class="empty-state" id="no-more-design-jobs" style="display: block; margin-top: 1rem; background-color: rgba(255, 215, 0, 0.05);">
+                    <div class="empty-state-icon" style="opacity: 0.1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                        </svg>
+                    </div>
+                    <h3>More Positions Coming Soon</h3>
+                    <p class="empty-state-text">We're constantly growing and will be adding more design positions in the near future. Check back soon or sign up for job alerts to be notified when new opportunities are posted.</p>
+                </div>
+            </div>
+            
+            <!-- Development Jobs Section -->
+            <div class="department-jobs" id="development-jobs">
+               
+                 <!-- Frontend Web Developer Job Card -->
+                <div class="job-card" data-job-id="frontend-web-developer" data-department="development">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Frontend Web Developer</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re hiring a Frontend Web Developer skilled in HTML and CSS to build and maintain web projects. You’ll work closely with designers and other team members remotely with flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Develop responsive, user-friendly websites</li>
+                                    <li>Troubleshoot and fix bugs</li>
+                                    <li>Collaborate with design and project teams</li>
+                                    <li>Write clean, maintainable code</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio demonstrating web development with HTML and CSS</li>
+                                    <li>Ability to work independently</li>
+                                    <li>Strong communication</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Backend knowledge (JavaScript or other)</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">Frontend Web Developer Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- No other development jobs currently -->
+                <div class="empty-state" id="no-more-dev-jobs" style="display: block; margin-top: 1rem; background-color: rgba(255, 215, 0, 0.05);">
+                    <div class="empty-state-icon" style="opacity: 0.1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                        </svg>
+                    </div>
+                    <h3>More Positions Coming Soon</h3>
+                    <p class="empty-state-text">We're constantly growing and will be adding more development positions in the near future. Check back soon or sign up for job alerts to be notified when new opportunities are posted.</p>
+                </div>
+            </div>
+            
+            <!-- Marketing Jobs Section -->
+            <div class="department-jobs" id="marketing-jobs">
+                     <!-- Talent & Partnership Scout -->
+                <div class="job-card" data-job-id="talent-and-partnership-scout" data-department="marketing">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>Talent & Partnership Scout</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re searching for a Talent & Partnership Scout to find and engage small agencies, developers, and creatives interested in partnering with Laius Group. This freelance role is remote, with flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Identify and reach out to potential partners</li>
+                                    <li>Build and maintain professional relationships</li>
+                                    <li>Present partnership opportunities</li>
+                                    <li>Help grow Laius Group’s freelance network</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio or evidence of relevant outreach or sales experience</li>
+                                    <li>Excellent communication and networking skills</li>
+                                    <li>Self-motivated and organized</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Familiarity with creative/digital agencies</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">IT Support Specialist Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No other marketing jobs currently -->
+                <div class="empty-state" id="no-more-marketing-jobs" style="display: block; margin-top: 1rem; background-color: rgba(255, 215, 0, 0.05);">
+                    <div class="empty-state-icon" style="opacity: 0.1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                        </svg>
+                    </div>
+                    <h3>More Positions Coming Soon</h3>
+                    <p class="empty-state-text">We're constantly growing and will be adding more marketing positions in the near future. Check back soon or sign up for job alerts to be notified when new opportunities are posted.</p>
+                </div>
+            </div>
+            
+            <!-- Operations Jobs Section -->
+            <div class="department-jobs" id="operations-jobs">
+               <!-- IT Support Specialist Job Card -->
+                <div class="job-card" data-job-id="it-support-specialist" data-department="operations">
+                    <div class="job-header">
+                        <div class="job-title-area">
+                            <div class="job-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M16.48,10.41c-0.39,0.39-1.04,0.39-1.43,0l-4.47-4.46l-7.05,7.04l-0.66-0.63c-1.17-1.17-1.17-3.07,0-4.24l4.24-4.24 c1.17-1.17,3.07-1.17,4.24,0L16.48,9C16.87,9.39,16.87,10.02,16.48,10.41z M17.18,8.29c0.78,0.78,0.78,2.05,0,2.83 c-1.27,1.27-2.61,0.22-2.83,0l-3.76-3.76l-5.57,5.57c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.42,0l4.62-4.62l0.71,0.71 l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.42,0l4.62-4.62l0.71,0.71l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41 c0.39,0.39,1.02,0.39,1.41,0l4.62-4.62l0.71,0.71l-4.62,4.62c-0.39,0.39-0.39,1.02,0,1.41c0.39,0.39,1.02,0.39,1.41,0l8.32-8.34 c1.17-1.17,1.17-3.07,0-4.24l-4.24-4.24c-1.15-1.15-3.01-1.17-4.18-0.06L17.18,8.29z"/>
+                                </svg>
+                            </div>
+                            <div class="job-title-info">
+                                <h3>IT Support Specialist</h3>
+                                <div class="job-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        Remote (Worldwide)
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        Freelance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="job-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-details-content">
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                                    </svg>
+                                    About the Role
+                                </h4>
+                                <p class="job-description">
+                                   We’re looking for an IT Support Specialist to provide remote technical assistance and troubleshoot hardware and software issues. This freelance role offers flexible hours.
+                                </p>
+                                <p class="job-description">
+                                   Payment is provided in your preferred currency. Applicants must be 16 years or older. No CV needed—just a strong portfolio.
+                                </p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                                    </svg>
+                                    Responsibilities
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Diagnose and resolve technical problems remotely</li>
+                                    <li>Guide users clearly and patiently</li>
+                                    <li>Maintain basic IT infrastructure and security</li>
+                                    <li>Collaborate with the team</li>
+ 
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                                    </svg>
+                                    Requirements
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Portfolio or proof of IT support experience</li>
+                                    <li>Knowledge of common troubleshooting (VPS, DNS etc)</li>
+                                    <li>Strong communication</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="job-section-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                                    </svg>
+                                    Nice to Have
+                                </h4>
+                                <ul class="job-list">
+                                    <li>Network admin familiarity</li>
+                                    <li>SSH & Linux Terminal Knowledge</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="apply-container">
+                                <h4 class="apply-title">How to Apply</h4>
+                                <p class="apply-instructions">
+                                    To apply for this position, please send your application to <span class="apply-email">careers@laiusgroup.com</span> following the format below. Make sure to include all the requested information to help us process your application efficiently.
+                                </p>
+                                
+                                <div class="email-format">
+                                    <h5 class="format-title">Email Format:</h5>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Subject Line:</div>
+                                        <div class="format-value">IT Support Specialist Application</div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Body:</div>
+                                        <div class="format-value">
+                                            1. Full Name<br>
+                                            2. Location/Timezone<br>
+                                            3. Phone Number (optional)<br>
+                                            4. Portfolio Link<br>
+                                            5. LinkedIn Profile (optional)<br>
+                                            6. How you found this position<br>
+                                            7. Why you're interested in joining Laius Group (150 words max)<br>
+                                            8. Your availability to start
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="format-field">
+                                        <div class="format-label">Attachments:</div>
+                                        <div class="format-value">
+                                            - Your portfolio/CV (PDF format)<br>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="apply-instructions">
+                                    We review applications on a rolling basis and will contact qualified candidates for interviews.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- No other operations jobs currently -->
+                <div class="empty-state" id="no-more-operations-jobs" style="display: block; margin-top: 1rem; background-color: rgba(255, 215, 0, 0.05);">
+                    <div class="empty-state-icon" style="opacity: 0.1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                        </svg>
+                    </div>
+                    <h3>More Positions Coming Soon</h3>
+                    <p class="empty-state-text">We're constantly growing and will be adding more operations positions in the near future. Check back soon or sign up for job alerts to be notified when new opportunities are posted.</p>
+                </div>
+            </div>
+            
+            <!-- Empty State (displayed when search has no results) -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                <h3>No Positions Found</h3>
+                <p class="empty-state-text">We couldn't find any positions matching your search criteria. Please try different keywords or browse by department.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="benefits-bg">
+            <div class="benefits-circle benefits-circle-1"></div>
+            <div class="benefits-circle benefits-circle-2"></div>
+        </div>
+        
+        <div class="benefits-content">
+            <h2 class="benefits-title">Why Join Laius Group?</h2>
+            <p class="benefits-subtitle">We believe in creating a workplace where creativity thrives, innovation is encouraged, and personal growth is prioritized. Here are some of the benefits of joining our team:</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Flexible Work Hours</h3>
+                    <p class="benefit-desc">Work when you're most productive. We care about results, not when you clock in and out.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Health & Wellness</h3>
+                    <p class="benefit-desc">Mental health support and wellness resources to help you feel your best</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Continuous Learning</h3>
+                    <p class="benefit-desc">Professional development budget and regular learning opportunities to grow your skills.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M8 10V8H6v2H2v2h12v-2H8zm4.05-6.01l.59-.65L11.5 2.5l-.5 2h-1l-.5-2-1.14.85.59.65-1.5 1.5 1.75.5L10 8l1.5 1 .75-2.5 1.75-.5-1.95-2.01zM21.95 11l-1.95-2.01.59-.65L19.5 7.5l-.5 2h-1l-.5-2-1.14.85.59.65-1.5 1.5 1.75.5L18 13l1.5 1 .75-2.5 1.75-.5zM16 14v3h-3v2h5v-5h-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Remote Work</h3>
+                    <p class="benefit-desc">Work from anywhere in the world with a stable internet connection.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Collaborative Culture</h3>
+                    <p class="benefit-desc">Work with passionate professionals from around the world in a supportive environment.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Open Communication</h3>
+                    <p class="benefit-desc">We believe in transparent communication, regular feedback, and open-door policies.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Meaningful Work</h3>
+                    <p class="benefit-desc">Work on diverse projects for clients who are making a real impact in their industries.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm4-9h-3V8a1 1 0 0 0-2 0v3H8a1 1 0 0 0 0 2h3v3a1 1 0 0 0 2 0v-3h3a1 1 0 0 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title">Work-Life Balance</h3>
+                    <p class="benefit-desc">Not vibing with a task? No stress. We’ll never force you to do something you’re not comfortable with.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Laius Group</h4>
+                <p style="color: #aaa; margin-bottom: 1rem;">We transform ideas into exceptional digital experiences through innovative solutions.</p>
+                <div class="footer-social">
+                    <a href="https://x.com/@laiusgroup" class="social-icon">
+                     <svg width="1200" height="1227" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/>
+</svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">UI/UX Design</a></li>
+                    <li><a href="#">Digital Marketing</a></li>
+                    <li><a href="#">Video Editing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+               <li><a href="/">Home</a></li>
+                    <li><a href="/#services">Services</a></li>
+                    <li><a href="/#contact">Contact</a></li>
+                    <li><a href="/documents">Documents</a></li>
+                    <li><a href="/careers">Careers</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/lost">Lost Card Report</a></li>
+                     <li><a href="https://status.laiusgroup.com">Service Status</a></li>
+                </ul>
+            </div>
+            
+    
+        </div>
+        
+        <div class="footer-bottom">
+            <p class="copyright">© 2025 Laius Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorCircle = document.querySelector('.cursor-circle');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        const clickables = document.querySelectorAll('a, button, .menu-toggle, input');
+        
+        clickables.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursorCircle.style.width = '40px';
+                cursorCircle.style.height = '40px';
+                cursorCircle.style.opacity = '0.5';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                cursorCircle.style.width = '24px';
+                cursorCircle.style.height = '24px';
+                cursorCircle.style.opacity = '1';
+            });
+        });
+        
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('nav ul');
+        
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            
+            const spans = menuToggle.querySelectorAll('span');
+            if (menuToggle.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+        
+        // Close menu when a nav link is clicked
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navMenu.classList.contains('active')) {
+                    menuToggle.click();
+                }
+            });
+        });
+        
+        const departmentFilters = document.querySelectorAll('.department-filter');
+        const departmentJobs = document.querySelectorAll('.department-jobs');
+        
+        departmentFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                departmentFilters.forEach(f => f.classList.remove('active'));
+                
+                filter.classList.add('active');
+                
+                const department = filter.getAttribute('data-department');
+                
+                departmentJobs.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                if (department === 'all') {
+                    document.getElementById('all-jobs').classList.add('active');
+                } else {
+                    document.getElementById(`${department}-jobs`).classList.add('active');
+                }
+            });
+        });
+        
+        const jobHeaders = document.querySelectorAll('.job-header');
+        
+        jobHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const jobCard = header.parentElement;
+                const jobDetails = jobCard.querySelector('.job-details');
+                const toggleBtn = header.querySelector('.job-toggle-btn');
+                
+                if (jobDetails.classList.contains('active')) {
+                    jobDetails.classList.remove('active');
+                    toggleBtn.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.job-details.active').forEach(detail => {
+                        detail.classList.remove('active');
+                        detail.parentElement.querySelector('.job-toggle-btn').classList.remove('active');
+                    });
+                    
+                    jobDetails.classList.add('active');
+                    toggleBtn.classList.add('active');
+                    
+                    setTimeout(() => {
+                        const headerHeight = document.querySelector('header').offsetHeight;
+                        const yOffset = -headerHeight - 20;
+                        const y = jobCard.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                    }, 300);
+                }
+            });
+        });
+        
+        const searchInput = document.getElementById('jobSearch');
+        const emptyState = document.getElementById('empty-state');
+        const jobCards = document.querySelectorAll('.job-card');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let resultsFound = false;
+            
+            if (searchTerm === '') {
+                const activeFilter = document.querySelector('.department-filter.active');
+                activeFilter.click();
+                emptyState.style.display = 'none';
+                return;
+            }
+            
+            departmentJobs.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById('all-jobs').classList.add('active');
+            
+            jobCards.forEach(card => {
+                const title = card.querySelector('.job-title-info h3').textContent.toLowerCase();
+                const meta = card.querySelector('.job-meta').textContent.toLowerCase();
+                const department = card.getAttribute('data-department').toLowerCase();
+                
+                if (title.includes(searchTerm) || meta.includes(searchTerm) || department.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    resultsFound = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            emptyState.style.display = resultsFound ? 'none' : 'block';
+        });
+        
+        // Check if device is touch device and disable custom cursor
+        function isTouchDevice() {
+            return (('ontouchstart' in window) ||
+                   (navigator.maxTouchPoints > 0) ||
+                   (navigator.msMaxTouchPoints > 0));
+        }
+        
+        if (isTouchDevice()) {
+            document.querySelector('.cursor').style.display = 'none';
+            document.querySelectorAll('*').forEach(el => {
+                el.style.cursor = 'auto';
+            });
+            document.querySelectorAll('a, button, .menu-toggle, input, .job-header, .department-filter').forEach(el => {
+                el.style.cursor = 'pointer';
+            });
+        }
+    </script>
+</body>
+</html>

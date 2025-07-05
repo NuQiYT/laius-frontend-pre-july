@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+    Developed by: Igor Kalen
+    Contact: igor.kalen@laiusgroup.com
+    Date: June 2, 2025
+
+    ---
+    Copyright (c) 2025 Laius Group. All rights reserved.
+
+    This code and its contents are proprietary to Laius Group. Unauthorized use,
+    reproduction, distribution, or modification of any part of this code is strictly
+    prohibited without explicit written permission from Laius Group.
+
+    This code is intended solely for internal use by official Laius Group operations
+    and deployment on verified domains and subdomains controlled by Laius Group.
+    This restriction does not apply to domains or subdomains where customers have
+    access to user-generated content, which may utilize parts of this code under
+    specific agreements. 
+ -->
+
+<head>
+<link rel="icon" href="/laiuslogo.png" type="image/png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            cursor: none;
+        }
+        
+        body {
+            background-color: #0f0f0f;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+        
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .cursor-circle {
+            width: 24px;
+            height: 24px;
+            border: 3px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.08s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        
+        /* Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 8%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 8%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: transform 0.3s;
+            z-index: 101;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            bottom: 5px;
+            right: -8px;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav li a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s;
+        }
+        
+        nav li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFD700;
+            transition: width 0.3s ease;
+        }
+        
+        nav li a:hover {
+            color: white;
+        }
+        
+        nav li a:hover::after {
+            width: 100%;
+        }
+        
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 20px;
+            width: 30px;
+            cursor: pointer;
+            z-index: 101;
+        }
+        
+        .menu-toggle span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 8% 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+            padding: 4rem 0;
+        }
+        
+        .hero-subtitle {
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.2s;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.4s;
+        }
+        
+        .hero-desc {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            color: #aaa;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards 0.6s;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+        }
+        
+        .circle-1 {
+            top: -200px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #FFD700, #FFCC00);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .circle-2 {
+            bottom: -300px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            animation: float 20s ease-in-out 2s infinite reverse;
+        }
+        
+        /* Privacy Hub Main Content */
+        .privacy-hub {
+            padding: 2rem 8% 8rem;
+        }
+        
+        .hub-intro {
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+        
+        .hub-intro p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        /* Categories Tabs */
+        .categories-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-tab {
+            padding: 0.8rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 30px;
+            color: #f0f0f0;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+        }
+        
+        .category-tab.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #0f0f0f;
+        }
+        
+        /* Documents Container */
+        .documents-container {
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .category-documents {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .category-documents.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .document-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .document-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .document-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .document-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .document-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #0f0f0f;
+        }
+        
+        .document-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .document-content {
+            padding: 1.5rem;
+        }
+        
+        .document-desc {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .document-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        .document-link {
+            display: inline-block;
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #0f0f0f;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .document-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+        
+        .document-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        .document-link:hover::before {
+            left: 100%;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            opacity: 0.2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .empty-state-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+        
+        .empty-state-text {
+            color: #aaa;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 3rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #aaa;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 8%;
+            background-color: #070707;
+            position: relative;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+        
+        .footer-col h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .footer-links li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links li a:hover {
+            color: #FFD700;
+            padding-left: 5px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .copyright {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .category-documents.active {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 5%;
+            }
+            
+            header.scrolled {
+                padding: 1rem 5%;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            nav ul {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 75%;
+                height: 100vh;
+                background-color: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.5s ease;
+                z-index: 99;
+                padding: 2rem;
+                gap: 2.5rem;
+            }
+            
+            nav ul.active {
+                right: 0;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+            }
+            
+            nav li a {
+                font-size: 1.3rem;
+                width: 100%;
+                text-align: center;
+                display: block;
+            }
+            
+            .hero {
+                padding: 6rem 5% 0;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .privacy-hub {
+                padding: 2rem 5% 5rem;
+            }
+            
+            .categories-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 1rem;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            
+            .categories-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .category-tab {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+            
+            .category-documents.active {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            footer {
+                padding: 3rem 5%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-desc {
+                font-size: 1rem;
+            }
+            
+            .hub-intro {
+                margin-bottom: 2rem;
+            }
+            
+            .hub-intro p {
+                font-size: 0.95rem;
+            }
+            
+            .document-header {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .document-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .document-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .document-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .search-input {
+                padding: 0.8rem 1rem 0.8rem 2.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .search-icon {
+                width: 16px;
+                height: 16px;
+                left: 0.8rem;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-col {
+                text-align: center;
+            }
+            
+            .footer-col h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .document-header {
+                padding: 1.2rem;
+            }
+            
+            .document-content {
+                padding: 1.2rem;
+            }
+            
+            .document-title {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (pointer: coarse) {
+            .cursor {
+                display: none;
+            }
+            
+            * {
+                cursor: auto !important;
+            }
+            
+            a, button, .menu-toggle, input, .category-tab {
+                cursor: pointer !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-circle"></div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+    <a href="https://laiusgroup.com/">
+  <img src="laius-group.png" alt="Laius Group Logo" style="height: 60px;">
+</a>
+        <nav>
+            <ul>
+                       <li><a href="/">Home</a></li>
+                <li><a href="/#services">Services</a></li>
+                <li><a href="/#contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/careers">Careers</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+        </div>
+        <div class="hero-content">
+            <p class="hero-subtitle">Transparency & Trust</p>
+            <h1 class="hero-title">Documents</h1>
+            <p class="hero-desc">Access all legal documents, privacy policies, and guidelines that govern our operations and your relationship with Laius Group.</p>
+        </div>
+    </section>
+    
+    <!-- Privacy Hub Main Content -->
+    <section class="privacy-hub">
+        <div class="hub-intro">
+            <p>At Laius Group, we believe in transparency and clarity. Our Privacy Hub is a centralized location where you can access all the important documents related to our services, operations, and your rights.</p>
+            <p>If you have any questions about these documents, please don't hesitate to <a href="https://laiusgroup.com/#contact" style="color: #FFD700; text-decoration: none;">contact us</a>.</p>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="documentSearch" class="search-input" placeholder="Search for documents...">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </div>
+        
+        <!-- Documents Container -->
+        <div class="documents-container">
+            <!-- all Doucments -->
+             <div class="category-documents active" id="legal-documents">
+               
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Terms of Service for Laius Group</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">Our Terms of Service outline the rules, guidelines, and obligations that govern the use of our services and platforms for Laius Group.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Terms%20of%20Service%20for%20Laius%20Group.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">GDPR and Data Protection Compliance Policy</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This policy outlines the Laius Group's commitment to GDPR and data protection compliance.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/GDPR%20and%20Data%20Protection%20Compliance%20Policy.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Laius Group Service Level Agreement (SLA)</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This agreement outlines the service levels and responsibilities for Laius Group services.</p>
+        <br>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Laius%20Group%20Service%20Level%20Agreement%20(SLA).pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Laius Group Acceptable Use Policy (AUP)</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This policy outlines the acceptable use guidelines for all Laius Group services and platforms.</p>
+        <br>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Laius%20Group%20Acceptable%20Use%20Policy%20(AUP).pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Laius Echo Acceptable Use Policy (AUP)</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This policy outlines the acceptable use guidelines for Laius Echo services.</p>
+        <br>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Laius%20Echo%20Acceptable%20Use%20Policy%20(AUP).pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Project Delivery Terms</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This document outlines the terms and conditions for project delivery by Laius Group.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Project%20Delivery%20Terms.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Information Security Statement for Laius Group</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This statement details the Laius Group's approach to information security.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Information%20Security%20Statement%20for%20Laius%20Group.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Backup & Recovery Policy for Laius Group</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This document outlines the policy for backing up and recovering data within the Laius Group.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Backup%20&%20Recovery%20Policy%20for%20Laius%20Group.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Dispute Resolution Policy</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This policy details the procedures for resolving disputes within the Laius Group.</p>
+        <br>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Dispute%20Resolution%20Policy.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+<div class="document-card">
+    <div class="document-header">
+        <div class="document-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+        </div>
+        <h3 class="document-title">Laius Group Refund Policy</h3>
+    </div>
+    <div class="document-content">
+        <p class="document-desc">This policy details the terms and conditions for refunds for Laius Group services.</p>
+        <br>
+        <a href="https://files.laiusgroup.com/docs/laiusgroup.com/Laius%20Group%20Refund%20Policy.pdf" class="document-link">View Document</a>
+    </div>
+</div>
+
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+                <h3>No Documents Found</h3>
+                <p class="empty-state-text">We couldn't find any documents matching your search criteria. Please try different keywords or browse by category.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Laius Group</h4>
+                <p style="color: #aaa; margin-bottom: 1rem;">We transform ideas into exceptional digital experiences through innovative solutions.</p>
+               <div class="footer-social">
+                    <a href="https://x.com/@laiusgroup" class="social-icon">
+                     <svg width="1200" height="1227" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/>
+</svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+               <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">UI/UX Design</a></li>
+                    <li><a href="#">Digital Marketing</a></li>
+                    <li><a href="#">Video Editing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                 <li><a href="/">Home</a></li>
+                    <li><a href="/#services">Services</a></li>
+                    <li><a href="/#contact">Contact</a></li>
+                    <li><a href="/documents">Documents</a></li>
+                    <li><a href="/careers">Careers</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/lost">Lost Card Report</a></li>
+                     <li><a href="https://status.laiusgroup.com">Service Status</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p class="copyright">© 2025 Laius Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorCircle = document.querySelector('.cursor-circle');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        const clickables = document.querySelectorAll('a, button, .menu-toggle, input');
+        
+        clickables.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursorCircle.style.width = '40px';
+                cursorCircle.style.height = '40px';
+                cursorCircle.style.opacity = '0.5';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                cursorCircle.style.width = '24px';
+                cursorCircle.style.height = '24px';
+                cursorCircle.style.opacity = '1';
+            });
+        });
+        
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('nav ul');
+        
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            
+            const spans = menuToggle.querySelectorAll('span');
+            if (menuToggle.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+        
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const categoryDocuments = document.querySelectorAll('.category-documents');
+        
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                categoryDocuments.forEach(docs => docs.classList.remove('active'));
+                
+                tab.classList.add('active');
+                
+                const category = tab.getAttribute('data-category');
+                document.getElementById(`${category}-documents`).classList.add('active');
+            });
+        });
+        
+        const searchInput = document.getElementById('documentSearch');
+        const emptyState = document.getElementById('empty-state');
+        const documentCards = document.querySelectorAll('.document-card');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let resultsFound = false;
+            
+            if (searchTerm === '') {
+                categoryDocuments.forEach(section => {
+                    if (section.classList.contains('active')) {
+                        section.style.display = 'grid';
+                        
+                        const cards = section.querySelectorAll('.document-card');
+                        cards.forEach(card => {
+                            card.style.display = 'block';
+                        });
+                    }
+                });
+                
+                emptyState.style.display = 'none';
+                return;
+            }
+            
+            categoryDocuments.forEach(section => {
+                section.style.display = 'block'; 
+                
+                const cards = section.querySelectorAll('.document-card');
+                let sectionHasResults = false;
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('.document-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.document-desc').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        resultsFound = true;
+                        sectionHasResults = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                section.style.display = sectionHasResults ? 'grid' : 'none';
+            });
+            
+            emptyState.style.display = resultsFound ? 'none' : 'block';
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+        });
+    </script>
+</body>
+</html>

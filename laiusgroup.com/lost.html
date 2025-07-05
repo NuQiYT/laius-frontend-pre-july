@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+    Developed by: Igor Kalen
+    Contact: igor.kalen@laiusgroup.com
+    Date: June 2, 2025
+
+    ---
+    Copyright (c) 2025 Laius Group. All rights reserved.
+
+    This code and its contents are proprietary to Laius Group. Unauthorized use,
+    reproduction, distribution, or modification of any part of this code is strictly
+    prohibited without explicit written permission from Laius Group.
+
+    This code is intended solely for internal use by official Laius Group operations
+    and deployment on verified domains and subdomains controlled by Laius Group.
+    This restriction does not apply to domains or subdomains where customers have
+    access to user-generated content, which may utilize parts of this code under
+    specific agreements. 
+ -->
+
+<head>
+<link rel="icon" href="/laiuslogo.png" type="image/png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Card</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #0f0f0f;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Cursor - Hide on touch devices */
+        @media (pointer: fine) {
+            * {
+                cursor: none;
+            }
+            
+            .cursor {
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                mix-blend-mode: difference;
+            }
+            
+            .cursor-dot {
+                width: 4px;
+                height: 4px;
+                background-color: white;
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+            .cursor-circle {
+                width: 24px;
+                height: 24px;
+                border: 3px solid white;
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                transition: all 0.08s cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 8%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 8%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            bottom: 5px;
+            right: -8px;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Language selector */
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: #f0f0f0;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .language-btn:hover {
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .language-btn span {
+            margin-left: 8px;
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 180px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .language-selector:hover .language-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #f0f0f0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .language-option:hover {
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+        
+        .language-option.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #0f0f0f;
+        }
+        
+        .language-flag {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Main content */
+        .main-content {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 8% 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-wrapper {
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+        }
+        
+        .card-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #0f0f0f;
+        }
+        
+        .page-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .page-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 2.5rem;
+        }
+        
+        .instructions {
+            margin-bottom: 2.5rem;
+        }
+        
+        .instruction-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+        
+        .instruction-list {
+            list-style-type: none;
+        }
+        
+        .instruction-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .instruction-list li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+        }
+        
+        .contact-box {
+            background-color: rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-left: 4px solid #FFD700;
+        }
+        
+        .contact-email {
+            font-weight: 600;
+            color: #FFD700;
+            word-break: break-all;
+        }
+        
+        .emphasis {
+            font-weight: 600;
+            color: #FFD700;
+        }
+        
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+        }
+        
+        .shape-1 {
+            top: -200px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #FFD700, #FFCC00);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            bottom: -300px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            animation: float 20s ease-in-out 2s infinite reverse;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem 8%;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .lang-content {
+            display: none;
+        }
+        
+        .lang-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            header {
+                padding: 1.5rem 6%;
+            }
+            
+            header.scrolled {
+                padding: 1rem 6%;
+            }
+            
+            .main-content {
+                padding: 7rem 6% 3rem;
+            }
+            
+            .content-wrapper {
+                padding: 2.5rem;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 5%;
+            }
+            
+            header.scrolled {
+                padding: 1rem 5%;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo::after {
+                width: 5px;
+                height: 5px;
+                bottom: 4px;
+                right: -7px;
+            }
+            
+            .language-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 6rem 5% 3rem;
+            }
+            
+            .content-wrapper {
+                padding: 2rem;
+            }
+            
+            .card-icon {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-icon svg {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .page-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .instruction-title {
+                font-size: 1.2rem;
+            }
+            
+            .instruction-list li {
+                font-size: 0.95rem;
+            }
+            
+            .contact-box {
+                padding: 1.2rem;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header {
+                padding: 1.2rem 4%;
+            }
+            
+            header.scrolled {
+                padding: 0.8rem 4%;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .language-btn {
+                padding: 0.3rem 0.7rem;
+                font-size: 0.85rem;
+            }
+            
+            .language-dropdown {
+                width: 160px;
+                padding: 0.4rem;
+            }
+            
+            .language-option {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 5.5rem 4% 2rem;
+            }
+            
+            .content-wrapper {
+                padding: 1.5rem;
+                border-radius: 15px;
+            }
+            
+            .card-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 1.2rem;
+            }
+            
+            .card-icon svg {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .page-title {
+                font-size: 1.6rem;
+                margin-bottom: 1rem;
+            }
+            
+            .page-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .instruction-title {
+                font-size: 1.1rem;
+            }
+            
+            .instruction-list li {
+                padding-left: 25px;
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .instruction-list li:before {
+                width: 10px;
+                height: 10px;
+                top: 7px;
+            }
+            
+            .contact-box {
+                padding: 1rem;
+                font-size: 0.9rem;
+                margin-top: 1.5rem;
+            }
+            
+            footer {
+                padding: 1.5rem 4%;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .language-btn .current-language {
+                display: none;
+            }
+            
+            .language-btn {
+                padding: 0.4rem;
+            }
+            
+            .language-btn span.current-flag {
+                margin-left: 0;
+                font-size: 1.2rem;
+            }
+            
+            .content-wrapper {
+                padding: 1.2rem;
+            }
+            
+            .page-title {
+                font-size: 1.4rem;
+            }
+            
+            .page-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Touch device overrides */
+        @media (pointer: coarse) {
+            a, button, .language-option, .language-btn {
+                cursor: pointer !important;
+            }
+            
+            .language-dropdown {
+                display: none;
+            }
+            
+            .language-selector.active .language-dropdown {
+                display: block;
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            
+            .language-selector:hover .language-dropdown {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-circle"></div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+    <a href="https://laiusgroup.com/">
+  <img src="laius-group.png" alt="Laius Group Logo" style="height: 60px;">
+</a>
+        
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <button class="language-btn">
+                <span class="current-flag">🇬🇧</span>
+                <span class="current-language">English</span>
+            </button>
+            <div class="language-dropdown">
+                <a href="#" class="language-option active" data-lang="en">
+                    <span class="language-flag">🇬🇧</span>
+                    English
+                </a>
+                <a href="#" class="language-option" data-lang="pl">
+                    <span class="language-flag">🇵🇱</span>
+                    Polski
+                </a>
+                <a href="#" class="language-option" data-lang="es">
+                    <span class="language-flag">🇪🇸</span>
+                    Español
+                </a>
+                <a href="#" class="language-option" data-lang="fr">
+                    <span class="language-flag">🇫🇷</span>
+                    Français
+                </a>
+                <a href="#" class="language-option" data-lang="it">
+                    <span class="language-flag">🇮🇹</span>
+                    Italiano
+                </a>
+                <a href="#" class="language-option" data-lang="de">
+                    <span class="language-flag">🇩🇪</span>
+                    Deutsch
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="background-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                </svg>
+            </div>
+
+            <!-- English Content -->
+            <div class="lang-content active" id="lang-en">
+                <h1 class="page-title">Found a Laius Group Card?</h1>
+                <p class="page-subtitle">Thank you for finding our employee's debit card. Here's what to do next.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Please follow these steps:</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">Do not attempt to use the card</span> for any transactions as it has been reported lost.</li>
+                        <li>Contact us via email at <span class="contact-email">lostcard@laiusgroup.com</span> to arrange the return of the card.</li>
+                        <li>In your email, please include the <span class="emphasis">last 4 digits of the card</span> and the <span class="emphasis">expiry date</span> to help us identify the card owner quickly.</li>
+                        <li>If possible, mention where and when you found the card to help us improve our security procedures.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Our team will contact you promptly to arrange for the collection or destruction of the card, whichever is more convenient for you.</p>
+                    <p style="margin-top: 0.5rem;">The Laius Group team deeply appreciates your honesty and assistance.</p>
+                </div>
+            </div>
+            
+            <!-- Polish Content -->
+            <div class="lang-content" id="lang-pl">
+                <h1 class="page-title">Znalazłeś kartę Laius Group?</h1>
+                <p class="page-subtitle">Dziękujemy za znalezienie karty debetowej naszego pracownika. Oto co należy zrobić.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Prosimy o wykonanie następujących kroków:</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">Nie próbuj używać karty</span> do żadnych transakcji, ponieważ została już zgłoszona jako zagubiona.</li>
+                        <li>Skontaktuj się z nami poprzez e-mail: <span class="contact-email">lostcard@laiusgroup.com</span>, aby ustalić sposób zwrotu karty.</li>
+                        <li>W wiadomości e-mail podaj <span class="emphasis">ostatnie 4 cyfry karty</span> oraz <span class="emphasis">datę ważności</span>, aby pomóc nam szybko zidentyfikować właściciela karty.</li>
+                        <li>Jeśli to możliwe, wspomnij gdzie i kiedy znalazłeś kartę, aby pomóc nam ulepszyć nasze procedury bezpieczeństwa.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Nasz zespół skontaktuje się z Tobą niezwłocznie, aby ustalić odbiór lub zniszczenie karty, w zależności od tego, co będzie dla Ciebie wygodniejsze.</p>
+                    <p style="margin-top: 0.5rem;">Zespół Laius Group bardzo docenia Twoją uczciwość i pomoc.</p>
+                </div>
+            </div>
+            
+            <!-- Spanish Content -->
+            <div class="lang-content" id="lang-es">
+                <h1 class="page-title">¿Ha encontrado una tarjeta de Laius Group?</h1>
+                <p class="page-subtitle">Gracias por encontrar la tarjeta de débito de nuestro empleado. Estos son los pasos a seguir.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Por favor, siga estos pasos:</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">No intente utilizar la tarjeta</span> para ninguna transacción, ya que ha sido reportada como perdida.</li>
+                        <li>Contáctenos por correo electrónico a <span class="contact-email">lostcard@laiusgroup.com</span> para organizar la devolución de la tarjeta.</li>
+                        <li>En su correo, incluya los <span class="emphasis">últimos 4 dígitos de la tarjeta</span> y la <span class="emphasis">fecha de vencimiento</span> para ayudarnos a identificar rápidamente al propietario.</li>
+                        <li>Si es posible, mencione dónde y cuándo encontró la tarjeta para ayudarnos a mejorar nuestros procedimientos de seguridad.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Nuestro equipo se pondrá en contacto con usted lo antes posible para organizar la recogida o destrucción de la tarjeta, lo que le resulte más conveniente.</p>
+                    <p style="margin-top: 0.5rem;">El equipo de Laius Group agradece profundamente su honestidad y asistencia.</p>
+                </div>
+            </div>
+            
+            <!-- French Content -->
+            <div class="lang-content" id="lang-fr">
+                <h1 class="page-title">Vous avez trouvé une carte Laius Group ?</h1>
+                <p class="page-subtitle">Merci d'avoir trouvé la carte de débit de notre employé. Voici la marche à suivre.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Veuillez suivre ces étapes :</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">N'essayez pas d'utiliser la carte</span> pour des transactions car elle a été signalée comme perdue.</li>
+                        <li>Contactez-nous par email à <span class="contact-email">lostcard@laiusgroup.com</span> pour organiser le retour de la carte.</li>
+                        <li>Dans votre email, veuillez inclure les <span class="emphasis">4 derniers chiffres de la carte</span> et la <span class="emphasis">date d'expiration</span> pour nous aider à identifier rapidement le propriétaire.</li>
+                        <li>Si possible, mentionnez où et quand vous avez trouvé la carte pour nous aider à améliorer nos procédures de sécurité.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Notre équipe vous contactera rapidement pour organiser la collecte ou la destruction de la carte, selon ce qui vous convient le mieux.</p>
+                    <p style="margin-top: 0.5rem;">L'équipe de Laius Group apprécie sincèrement votre honnêteté et votre aide.</p>
+                </div>
+            </div>
+            
+            <!-- Italian Content -->
+            <div class="lang-content" id="lang-it">
+                <h1 class="page-title">Hai trovato una carta Laius Group?</h1>
+                <p class="page-subtitle">Grazie per aver trovato la carta di debito del nostro dipendente. Ecco cosa fare.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Per favore, segui questi passaggi:</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">Non tentare di utilizzare la carta</span> per alcuna transazione poiché è stata segnalata come smarrita.</li>
+                        <li>Contattaci via email all'indirizzo <span class="contact-email">lostcard@laiusgroup.com</span> per organizzare la restituzione della carta.</li>
+                        <li>Nella tua email, includi le <span class="emphasis">ultime 4 cifre della carta</span> e la <span class="emphasis">data di scadenza</span> per aiutarci a identificare rapidamente il proprietario.</li>
+                        <li>Se possibile, menziona dove e quando hai trovato la carta per aiutarci a migliorare le nostre procedure di sicurezza.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Il nostro team ti contatterà prontamente per organizzare il ritiro o la distruzione della carta, in base a ciò che è più conveniente per te.</p>
+                    <p style="margin-top: 0.5rem;">Il team di Laius Group apprezza profondamente la tua onestà e assistenza.</p>
+                </div>
+            </div>
+            
+            <!-- German Content -->
+            <div class="lang-content" id="lang-de">
+                <h1 class="page-title">Eine Laius Group Karte gefunden?</h1>
+                <p class="page-subtitle">Vielen Dank für das Finden der Debitkarte unseres Mitarbeiters. Hier erfahren Sie, was als Nächstes zu tun ist.</p>
+                
+                <div class="instructions">
+                    <h2 class="instruction-title">Bitte befolgen Sie diese Schritte:</h2>
+                    <ul class="instruction-list">
+                        <li><span class="emphasis">Versuchen Sie nicht, die Karte</span> für Transaktionen zu verwenden, da sie als verloren gemeldet wurde.</li>
+                        <li>Kontaktieren Sie uns per E-Mail unter <span class="contact-email">lostcard@laiusgroup.com</span>, um die Rückgabe der Karte zu arrangieren.</li>
+                        <li>Geben Sie in Ihrer E-Mail die <span class="emphasis">letzten 4 Ziffern der Karte</span> und das <span class="emphasis">Ablaufdatum</span> an, um uns bei der schnellen Identifizierung des Karteninhabers zu helfen.</li>
+                        <li>Erwähnen Sie wenn möglich, wo und wann Sie die Karte gefunden haben, um uns bei der Verbesserung unserer Sicherheitsverfahren zu helfen.</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-box">
+                    <p>Unser Team wird sich umgehend mit Ihnen in Verbindung setzen, um die Abholung oder Vernichtung der Karte zu arrangieren, je nachdem, was für Sie bequemer ist.</p>
+                    <p style="margin-top: 0.5rem;">Das Team von Laius Group schätzt Ihre Ehrlichkeit und Hilfe sehr.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Laius Group. All Rights Reserved.</p>
+    </footer>
+    
+    <script>
+        // Check if device is touch device
+        function isTouchDevice() {
+            return (('ontouchstart' in window) ||
+                   (navigator.maxTouchPoints > 0) ||
+                   (navigator.msMaxTouchPoints > 0));
+        }
+        
+        // Only initialize custom cursor if not a touch device
+        if (!isTouchDevice()) {
+            const cursor = document.querySelector('.cursor');
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorCircle = document.querySelector('.cursor-circle');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            
+            const clickables = document.querySelectorAll('a, button');
+            
+            clickables.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    cursorCircle.style.width = '40px';
+                    cursorCircle.style.height = '40px';
+                    cursorCircle.style.opacity = '0.5';
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    cursorCircle.style.width = '24px';
+                    cursorCircle.style.height = '24px';
+                    cursorCircle.style.opacity = '1';
+                });
+            });
+        } else {
+            // Hide cursor on touch devices
+            document.querySelector('.cursor').style.display = 'none';
+            
+            // Add touch-friendly handling for language dropdown
+            const languageBtn = document.querySelector('.language-btn');
+            const languageSelector = document.querySelector('.language-selector');
+            
+            languageBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                languageSelector.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', (e) => {
+                if (!languageSelector.contains(e.target)) {
+                    languageSelector.classList.remove('active');
+                }
+            });
+        }
+        
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const languageOptions = document.querySelectorAll('.language-option');
+            const currentFlag = document.querySelector('.current-flag');
+            const currentLanguage = document.querySelector('.current-language');
+            const langContents = document.querySelectorAll('.lang-content');
+            
+            function switchLanguage(lang) {
+                languageOptions.forEach(opt => {
+                    if (opt.getAttribute('data-lang') === lang) {
+                        opt.classList.add('active');
+                        const flag = opt.querySelector('.language-flag').textContent;
+                        currentFlag.textContent = flag;
+                        currentLanguage.textContent = opt.textContent.trim();
+                    } else {
+                        opt.classList.remove('active');
+                    }
+                });
+                
+                langContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                const targetContent = document.getElementById(`lang-${lang}`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+                
+                localStorage.setItem('preferredLanguage', lang);
+                
+                // Close dropdown on touch devices after selection
+                if (isTouchDevice()) {
+                    document.querySelector('.language-selector').classList.remove('active');
+                }
+            }
+            
+            languageOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const lang = option.getAttribute('data-lang');
+                    switchLanguage(lang);
+                });
+            });
+
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang) {
+                switchLanguage(savedLang);
+            }
+        });
+    </script>
+</body>
+</html>
