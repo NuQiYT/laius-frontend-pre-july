@@ -1,2 +1,2 @@
 # laius-frontend-pre-july
-Frontend code for Laius Group site (before operations paused)
+Frontend code & files for Laius Group sites before operations paused.
